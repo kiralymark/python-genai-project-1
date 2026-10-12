@@ -1,109 +1,74 @@
 from google import genai
 
-file = open("secrets/pass.txt", "r")    # Open the file in read mode
 
-file_content = file.read()      # read the file_content
-#client = genai.Client(api_key=file_content)
-file.close()
+class Program:
 
-#response = client.models.generate_content(
-#     model="gemini-3.5-flash-lite",
-#     contents="Why is the sky blue?"
-#
-#)
-#print(response.text)
+    def __init__(self):
+        pass
 
+    def user_interface(self):
+        print("1 - ...")
+        print("2 - .. ..")
+        print("3 - exit")
 
-# temporary code 
-#file_content = file.read()      # read the file_content
-# client = genai.Client(api_key=file_content)
-#file.close()
+        while True:
 
-#model = file.read()
-#prompt = file.read()
-#include_thoughts = file.read() # values: True / False
-#thinking_level = file.read()   # values: "low" , "medium" , "high"
+            user_input = input("Choose from the menu options: ")
 
-# response = client.models.generate_content(
-#     model=model,
-#     contents=prompt,
-#     config=types.GenerateContentConfig(
-#         max_output_tokens=5000,
-#         thinking_config=types.ThinkingConfig(
-#             include_thoughts=False,
-#             thinking_level="high"
-#         )
-#     )
-# )
-#print(response.text)
+            if(user_input == "1"):
+                AskGenAI.ask_ai()
+                pass
 
-##    'max_output_tokens': 4096,
+            elif(user_input == "2"):
+                Settings.print_settings()
+                pass
 
-##        thinking_config=types.ThinkingConfig(
-##            thinking_budget=0                         # thinking_budget=1024
-##        )
+            elif(user_input == "3"):
+                print("Exiting...")
+                break 
 
+            else:
+                print("Not a valid menu option. Please try again!")
+ 
 
-# Alternative code (to set gemini ai thinking level)     
-# tools = [
-#     {
-#         'type': 'code_execution',
-#     },
-#     {
-#         'type': 'google_search',
-#     },
-# ]
+class Settings:
 
-# generation_config = {
-#     'max_output_tokens': 4096,
-#     'thinking_level': 'high',
-# }
+    def __init__(self):
+        pass
 
-# interaction = client.interactions.create(
-#     model='models/gemini-3.8-flash',
-#     input="""INSERT_INPUT_HERE""",
-#     tools=tools,
-#     generation_config=generation_config,
-# )
+    def change_settings():
+        print("! ! !")
+        pass
 
-# print(interaction.steps[-1])
+    def print_settings():
+        print("!!")
+        pass
 
 
-# to use chat mode
-#chat = client.chats.create(model="gemini-3.5-flash-lite")
+class AskGenAI:
 
-# to upload (/import) files to Gemini AI
-#uploaded_file = client.files.upload(file="image.jpg")
-#uploaded_file = client.files.upload(file="audio.mp3")
-#response = client.models.generate_content(
-#     model="gemini-3.5-flash-lite",
-#     contents=["Describe this image for me", uploaded_file]
-#
-#)
-#response = client.models.generate_content(
-#     model="gemini-3.5-flash-lite",
-#     contents=["Transcribe this audio for me", uploaded_file]
-#
-#)
-# for pdf files ...
-#response = client.models.generate_content(
-#     model="gemini-3.5-flash-lite",
-#     contents=["Extract the dates and the prices from the file.", uploaded_file]
-#
-#)
-#print(response.text)
+    def __init__(self):
+        pass
+
+    def ask_ai():
+
+        print("!")
+        pass
+
+        file = open("secrets/pass.txt", "r")    # Open the file in read mode
+
+        file_content = file.read()      # read the file_content
+        #client = genai.Client(api_key=file_content)
+        file.close()
+
+        #response = client.models.generate_content(
+        #     model="gemini-3.5-flash-lite",
+        #     contents="Why is the sky blue?"
+        #
+        #)
+        #print(response.text)
 
 
-# Write response to file     
-
-# file = open("prompt.md", "r")    # Open the file in read mode
-
-# file_content = file.read()      # read the file_content
-# file.close()
-
-# response = file_content
-
-# print(response)
-
-# with open("response.md", "w", encoding="utf-8") as file_output:
-#     file_output.write(response)
+# Run the program
+start_program = Program()
+start_program.user_interface()
