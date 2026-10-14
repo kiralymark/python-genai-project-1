@@ -9,14 +9,20 @@ class Program:
     def user_interface(self):
         is_program_running = True
 
-        print("\nMain Menu")
-        print("1 - Ask AI")
-        print("2 - Settings")
-        print("3 - Exit Program")
+        str_main_menu = ("\nMain Menu\n"
+        "1 - Ask AI\n"
+        "2 - Settings\n"
+        "3 - Exit Program")
+
+        str_not_valid_menu = "Not a valid menu option. Please try again!"
+
+        str_choose_menu_message = "\nChoose from the menu options: "
+
+        print(str_main_menu)
 
         while is_program_running:
 
-            user_input = input("\nChoose from the menu options: ")
+            user_input = input(str_choose_menu_message)
 
             # menu Ask AI
             if(user_input == "1"):
@@ -25,8 +31,9 @@ class Program:
 
             # menu Settings
             elif(user_input == "2"):
+                is_settings_menu_active = True
 
-                while True:
+                while is_settings_menu_active:
                     selected_preset_id = "1"
 
                     is_api_testing = False
@@ -43,25 +50,20 @@ class Program:
                     print("2 - Test API connection " + str(is_api_testing))
                     print("3 - Exit")
 
-                    user_input = input("\nChoose from the menu options: ")
+                    user_input = input(str_choose_menu_message)
 
                     if(user_input == "1"):
                         print("Select...")
-                        break
-
+                        
                     elif(user_input == "2"):
                         print("test...")
-                        break
-
+                        
                     elif(user_input == "3"):
-                        print("\nMain Menu")
-                        print("1 - Ask AI")
-                        print("2 - Settings")
-                        print("3 - Exit Program")
-                        break
+                        print(str_main_menu)
+                        is_settings_menu_active = False
 
                     else:
-                        print("Not a valid menu option. Please try again!")
+                        print(str_not_valid_menu)
                 
                 #Settings.print_settings()
                 #pass
@@ -71,7 +73,7 @@ class Program:
                 is_program_running = False 
 
             else:
-                print("Not a valid menu option. Please try again!")
+                print(str_not_valid_menu)
  
 
 class Settings:
