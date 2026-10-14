@@ -7,25 +7,68 @@ class Program:
         pass
 
     def user_interface(self):
-        print("1 - ...")
-        print("2 - .. ..")
-        print("3 - exit")
+        is_program_running = True
 
-        while True:
+        print("\nMain Menu")
+        print("1 - Ask AI")
+        print("2 - Settings")
+        print("3 - Exit Program")
 
-            user_input = input("Choose from the menu options: ")
+        while is_program_running:
 
+            user_input = input("\nChoose from the menu options: ")
+
+            # menu Ask AI
             if(user_input == "1"):
                 AskGenAI.ask_ai()
                 pass
 
+            # menu Settings
             elif(user_input == "2"):
-                Settings.print_settings()
-                pass
+
+                while True:
+                    selected_preset_id = "1"
+
+                    is_api_testing = False
+
+                    print("\nSettings Menu")
+                    print("Currently selected preset_id: " + selected_preset_id + "\n")
+                    print("Currently used settings:")
+                    print("model=")
+                    print("contents=")
+                    print("thinking_level=")
+                    print("")
+
+                    print("1 - Select a preset_id")
+                    print("2 - Test API connection " + str(is_api_testing))
+                    print("3 - Exit")
+
+                    user_input = input("\nChoose from the menu options: ")
+
+                    if(user_input == "1"):
+                        print("Select...")
+                        break
+
+                    elif(user_input == "2"):
+                        print("test...")
+                        break
+
+                    elif(user_input == "3"):
+                        print("\nMain Menu")
+                        print("1 - Ask AI")
+                        print("2 - Settings")
+                        print("3 - Exit Program")
+                        break
+
+                    else:
+                        print("Not a valid menu option. Please try again!")
+                
+                #Settings.print_settings()
+                #pass
 
             elif(user_input == "3"):
                 print("Exiting...")
-                break 
+                is_program_running = False 
 
             else:
                 print("Not a valid menu option. Please try again!")
