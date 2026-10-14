@@ -1,7 +1,8 @@
 from google import genai
-
+import json
 
 class Program:
+    selected_preset_id = 0           # 0
 
     def __init__(self):
         pass
@@ -34,12 +35,12 @@ class Program:
                 is_settings_menu_active = True
 
                 while is_settings_menu_active:
-                    selected_preset_id = "1"
+                    #Program.selected_preset_id = "1"
 
                     is_api_testing = False
 
                     print("\nSettings Menu")
-                    print("Currently selected preset_id: " + selected_preset_id + "\n")
+                    print("Currently selected preset_id: " + Program.selected_preset_id + "\n")
                     print("Currently used settings:")
                     print("model=")
                     print("contents=")
@@ -53,8 +54,13 @@ class Program:
                     user_input = input(str_choose_menu_message)
 
                     if(user_input == "1"):
-                        print("Select...")
-                        
+                        is_valid_json = Settings.validate_settings()
+
+                        #if(is_valid_json):
+                        #    user_input = input("\nChoose a preset_id: ")
+
+                        #pass
+
                     elif(user_input == "2"):
                         print("test...")
                         
@@ -65,9 +71,6 @@ class Program:
                     else:
                         print(str_not_valid_menu)
                 
-                #Settings.print_settings()
-                #pass
-
             elif(user_input == "3"):
                 print("Exiting...")
                 is_program_running = False 
@@ -81,11 +84,30 @@ class Settings:
     def __init__(self):
         pass
 
+    def validate_settings():
+        file = open("settings.json", "r")    # Open the file in read mode
+
+        file_content = file.read()      # read the file_content
+
+        #is_valid_json
+        try:
+            json.loads(file_content)
+            print("is valid json: True")
+            return True
+        except Exception as e:
+            print("is valid json: False")
+            print(e)
+            return False
+        finally:
+            file.close()
+
     def change_settings():
+        #change value in settings (selected_preset_id)
         print("! ! !")
         pass
 
     def print_settings():
+        # (selected_preset_id)
         print("!!")
         pass
 
