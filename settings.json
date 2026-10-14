@@ -1,0 +1,17 @@
+[
+    {
+        "preset_id": "0",
+        "model": "gemini-3.5-flash-lite",
+        "contents": "Why is the sky blue?"
+    },
+    {
+        "preset_id": "1",
+        "model": "gemini-3.5-flash-lite",
+        "thinking_level": "medium"
+    },
+    {
+        "preset_id": "2",
+        "model": "gemini-3.5-flash-lite",
+        "thinking_level": "high"
+    }
+]
