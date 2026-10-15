@@ -48,7 +48,7 @@ class Program:
                     print("")
 
                     print("1 - Select a preset_id")
-                    print("2 - Test API connection " + str(is_api_testing))
+                    print("2 - Test API connection " + "(" + str(is_api_testing) + ")")
                     print("3 - Exit")
 
                     user_input = input(str_choose_menu_message)
@@ -56,14 +56,16 @@ class Program:
                     if(user_input == "1"):
                         is_valid_json = Settings.validate_settings()
 
-                        Settings.print_all_preset_id()
-
-                        #if(is_valid_json):
-                            #user_input = input("\nChoose a preset_id: ")
+                        if(is_valid_json):
                             # TO DO list all available preset id
-                            # TO DO select a preset id
+                            Settings.print_all_preset_id()
 
-                        #pass
+                            # TO DO select a preset id
+                            user_input = input("\nChoose a preset_id: ")
+
+                            if not(len(user_input) == 0):
+                                #print("*")
+                                Settings.change_settings(user_input)
 
                     elif(user_input == "2"):
                         print("test...")
@@ -102,8 +104,47 @@ class Settings:
             print(e)
             return False
 
-    def change_settings():
+    def change_settings(user_input):
         #change value in settings (selected_preset_id)
+
+        list_available_id = []
+
+        # (READ FILE)
+        # todo: confirm if 'selected preset id' is valid (from user_input) 
+                
+        # iterate through json, get all available ID
+        # if ID exists, select it,
+        # else throw error message
+
+        with open("settings.json", "r") as file:    # Open the file in read mode
+            try:
+                file_content = json.load(file)      # to load a JSON object ; jsonData
+                presets_count = len(file_content['presets'][0])
+                for i in range(presets_count):
+                    for (key, value) in file_content['presets'][i].items():
+                        if(key == "preset_id"):
+                            #print(str(key) + " " + str(value))
+                            list_available_id.append(str(value))
+
+                #print(list_available_id) 
+
+            except Exception as e:
+                print(e)
+
+        is_searching_value = True
+        for id in list_available_id:
+            if is_searching_value:
+                if(user_input == id):
+                    #print("test...")
+                    is_searching_value = False
+
+        if is_searching_value == True:
+            print("Preset ID " + user_input + " cannot be found. Please try again!")
+
+        # todo: save changes to JSON file (write to file)
+        
+
+
         print("! ! !")
         pass
 
@@ -144,6 +185,7 @@ class Settings:
 
     def print_settings():
         # (selected_preset_id)
+        # read from file
         print("!!")
         pass
 
