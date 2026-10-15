@@ -5,7 +5,8 @@ class Program:
     selected_preset_id = 0           # 0
 
     def __init__(self):
-        pass
+        #selected_preset_id = 
+        Program.read_from_file_selected_preset_id()
 
     def user_interface(self):
         is_program_running = True
@@ -22,12 +23,14 @@ class Program:
         print(str_main_menu)
 
         while is_program_running:
+            Program.read_from_file_selected_preset_id()
 
             user_input = input(str_choose_menu_message)
 
             # menu Ask AI
             if(user_input == "1"):
                 AskGenAI.ask_ai()
+                Program.read_from_file_selected_preset_id()
                 pass
 
             # menu Settings
@@ -40,7 +43,7 @@ class Program:
                     is_api_testing = False
 
                     print("\nSettings Menu")
-                    print("Currently selected preset_id: " + str(Program.selected_preset_id) + "\n")
+                    print("Currently selected preset ID: " + str(Program.selected_preset_id) + "\n")
                     print("Currently used settings:")
                     print("model=")
                     print("contents=")
@@ -76,7 +79,9 @@ class Program:
 
                     else:
                         print(str_not_valid_menu)
-                
+
+                    Program.read_from_file_selected_preset_id()
+
             elif(user_input == "3"):
                 print("Exiting...")
                 is_program_running = False 
@@ -84,6 +89,25 @@ class Program:
             else:
                 print(str_not_valid_menu)
  
+    def read_from_file_selected_preset_id():
+        with open("settings.json", "r") as file:    # Open the file in read mode
+            try:
+                file_content = json.load(file)      # to load a JSON object ; jsonData
+
+            except Exception as e:
+                print(e)
+
+        #print(file_content['settings'][0])
+        #for (key, value) in file_content['settings'][0].items():
+        #    if(key == "selected_preset_id"):
+        #        print(value)
+
+        for (key, value) in file_content['settings'][0].items():
+            if(key == "selected_preset_id"):
+                Program.selected_preset_id = value
+
+        #Program.selected_preset_id = print(file_content['presets'][0])
+    
 
 class Settings:
 
@@ -99,6 +123,7 @@ class Settings:
             json.loads(file_content)
             print("is valid json: True")
             return True
+        
         except Exception as e:
             print("is valid json: False")
             print(e)
@@ -123,10 +148,7 @@ class Settings:
                 for i in range(presets_count):
                     for (key, value) in file_content['presets'][i].items():
                         if(key == "preset_id"):
-                            #print(str(key) + " " + str(value))
                             list_available_id.append(str(value))
-
-                #print(list_available_id) 
 
             except Exception as e:
                 print(e)
@@ -140,13 +162,41 @@ class Settings:
 
         if is_searching_value == True:
             print("Preset ID " + user_input + " cannot be found. Please try again!")
-
-        # todo: save changes to JSON file (write to file)
-        
-
+        else:
+            # todo: save changes to JSON file (write to file)
+            Settings.write_to_file_settings(user_input)
 
         print("! ! !")
-        pass
+
+    def write_to_file_settings(user_input):
+        # (save changes to JSON file (write to file))
+        
+        with open("settings.json", "r") as file:    # Open the file in read mode
+            try:
+                file_content = json.load(file)      # to load a JSON object ; jsonData
+
+            except Exception as e:
+                print(e)
+
+        print(file_content['settings'][0])
+            #if(key == "selected_preset_id"):
+            #    print()
+
+        #for (key, value) in file_content['settings'][0].items():
+        #    if(key == "selected_preset_id"):
+        #        print(value)
+
+        with open("settings.json", "w") as file:
+            try:
+                #file_content.update({"selected_preset_id" : str(user_input)})
+                #file_content_modified = json.dumps(file_content)
+                #print(file_content_modified)
+
+                file_content.update({"settings": [{"selected_preset_id" : str(user_input)}]})
+                file.write(json.dumps(file_content, indent=4))
+
+            except Exception as e:
+                print(e)
 
     def print_all_preset_id():
         with open("settings.json", "r") as file:    # Open the file in read mode
