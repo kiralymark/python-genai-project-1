@@ -40,7 +40,7 @@ class Program:
                     is_api_testing = False
 
                     print("\nSettings Menu")
-                    print("Currently selected preset_id: " + Program.selected_preset_id + "\n")
+                    print("Currently selected preset_id: " + str(Program.selected_preset_id) + "\n")
                     print("Currently used settings:")
                     print("model=")
                     print("contents=")
@@ -56,8 +56,12 @@ class Program:
                     if(user_input == "1"):
                         is_valid_json = Settings.validate_settings()
 
+                        Settings.print_all_preset_id()
+
                         #if(is_valid_json):
-                        #    user_input = input("\nChoose a preset_id: ")
+                            #user_input = input("\nChoose a preset_id: ")
+                            # TO DO list all available preset id
+                            # TO DO select a preset id
 
                         #pass
 
@@ -85,9 +89,8 @@ class Settings:
         pass
 
     def validate_settings():
-        file = open("settings.json", "r")    # Open the file in read mode
-
-        file_content = file.read()      # read the file_content
+        with open("settings.json", "r") as file:    # Open the file in read mode
+            file_content = file.read()      # read the file_content
 
         #is_valid_json
         try:
@@ -98,13 +101,46 @@ class Settings:
             print("is valid json: False")
             print(e)
             return False
-        finally:
-            file.close()
 
     def change_settings():
         #change value in settings (selected_preset_id)
         print("! ! !")
         pass
+
+    def print_all_preset_id():
+        with open("settings.json", "r") as file:    # Open the file in read mode
+            try:
+                file_content = json.load(file)      # to load a JSON object ; jsonData
+                #file_content = json.loads(file)     # to load a string
+
+                #print(file_content)
+                #print(file_content['presets'])
+                #print(file_content['presets'][0])
+                #print(file_content['presets'][0][0])
+
+                #for id in file_content[0]:
+                    #preset_id_array = id.
+                    #print(id)
+
+                #for i in range(0,11):
+                    #print(i)
+                    #print(file_content['presets'][i])
+
+                #for (key, value) in file_content.items():
+                    #print(str(key) + " " + str(value))
+
+                #for (key, value) in file_content['presets'][0].items():
+                    #print(str(key) + " " + str(value))
+
+                presets_count = len(file_content['presets'][0])
+                #print(presets_count)
+                for i in range(presets_count):
+                    for (key, value) in file_content['presets'][i].items():
+                        if(key == "preset_id"):
+                            print(str(key) + " " + str(value))
+
+            except Exception as e:
+                print(e)
 
     def print_settings():
         # (selected_preset_id)
