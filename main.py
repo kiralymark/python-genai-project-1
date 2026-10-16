@@ -7,6 +7,7 @@ class Program:
     def __init__(self):
         #selected_preset_id = 
         Program.read_from_file_selected_preset_id()
+        Settings.read_preset_settings(Program.selected_preset_id)
 
     def user_interface(self):
         is_program_running = True
@@ -39,6 +40,7 @@ class Program:
 
                 while is_settings_menu_active:
                     #Program.selected_preset_id = "1"
+                    Settings.read_preset_settings(Program.selected_preset_id)
 
                     is_api_testing = False
 
@@ -233,10 +235,54 @@ class Settings:
             except Exception as e:
                 print(e)
 
-    def print_settings():
+    def read_preset_settings(selected_preset_id):
         # (selected_preset_id)
         # read from file
-        print("!!")
+
+        # TO DO read preset settings that belong to a preset_id
+        print("*")
+
+        with open("settings.json", "r") as file:    # Open the file in read mode
+            try:
+                file_content = json.load(file)      # to load a JSON object ; jsonData
+
+                #print(file_content)
+                #print(file_content['presets'])
+                #print(file_content['presets'][0])
+                #print(file_content['presets'][0][0])
+
+                presets_count = len(file_content['presets'][0])
+                #print(presets_count)
+                is_searching_settings = False       #is_all_settings_stored
+                #is_all_settings_stored = False
+                #iterator = 0
+                print("!! PRESET " + selected_preset_id)
+                for i in range(presets_count):
+                    for (key, value) in file_content['presets'][i].items():
+                        if(key == "preset_id" and value == selected_preset_id):
+                            print(str(key) + " " + str(value))
+                            is_searching_settings = True
+                        elif(key == "preset_id" and (not value == selected_preset_id)):
+                            is_searching_settings = False
+                            #is_all_settings_stored = True
+                        #if(is_searching_settings and (not is_all_settings_stored)):
+                        if(is_searching_settings):
+                            if(key == "model"):
+                                print(str(key) + " " + str(value))
+                            if(key == "contents"):
+                                print(str(key) + " " + str(value))
+                            if(key == "thinking_level"):   
+                                print(str(key) + " " + str(value)) 
+
+            except Exception as e:
+                print(e)      
+
+    def store_preset_settings():
+        # TO DO store preset setting
+
+        # TO DO decide if a certain setting is available (TRUE/FALSE)
+
+        #print("!!")
         pass
 
 
@@ -245,6 +291,7 @@ class AskGenAI:
     def __init__(self):
         pass
 
+    # ask_ai_1()    # zero parameters, default test method, (in production version do not modify)
     def ask_ai():
 
         print("!")
@@ -262,6 +309,10 @@ class AskGenAI:
         #
         #)
         #print(response.text)
+
+    # ask_ai_2()    # only model is available
+
+    # ask_ai_3()    # model and thinking_level is available
 
 
 # Run the program
