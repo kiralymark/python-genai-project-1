@@ -139,7 +139,7 @@ class Settings:
         with open("settings.json", "r") as file:    # Open the file in read mode
             try:
                 file_content = json.load(file)      # to load a JSON object ; jsonData
-                presets_count = len(file_content['presets'][0])
+                presets_count = len(file_content['presets'])
                 for i in range(presets_count):
                     for (key, value) in file_content['presets'][i].items():
                         if(key == "preset_id"):
@@ -183,7 +183,7 @@ class Settings:
             try:
                 file_content = json.load(file)      # to load a JSON object ; jsonData
 
-                presets_count = len(file_content['presets'][0])
+                presets_count = len(file_content['presets'])
                 for i in range(presets_count):
                     for (key, value) in file_content['presets'][i].items():
                         if(key == "preset_id"):
@@ -201,7 +201,7 @@ class Settings:
             try:
                 file_content = json.load(file)      # to load a JSON object ; jsonData
 
-                presets_count = len(file_content['presets'][0])
+                presets_count = len(file_content['presets'])
                 is_searching_settings = False       #is_all_settings_stored
 
                 dict_preset_settings = {}
