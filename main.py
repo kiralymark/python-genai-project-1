@@ -47,12 +47,14 @@ class Program:
                     print("\nSettings Menu")
                     print("Currently selected preset ID: " + str(Program.selected_preset_id) + "\n")
                     print("Currently used settings:")
-                    print("model=")
-                    print("contents=")
-                    print("thinking_level=")
-                    print("")
+                    if(not(len(Settings.model) == 0)):
+                        print("model = " + "'" + Settings.model + "'")
+                    if(not(len(Settings.contents) == 0)):
+                        print("contents = " + "'" + Settings.contents + "'")
+                    if(not(len(Settings.thinking_level) == 0)):
+                        print("thinking_level = " + "'" + Settings.thinking_level + "'")
 
-                    print("1 - Select a preset_id")
+                    print("\n1 - Select a preset_id")
                     print("2 - Test API connection " + "(" + str(is_api_testing) + ")")
                     print("3 - Exit")
 
@@ -112,6 +114,9 @@ class Program:
     
 
 class Settings:
+    model = ""
+    contents = ""
+    thinking_level = ""
 
     def __init__(self):
         pass
@@ -237,7 +242,7 @@ class Settings:
 
     def read_preset_settings(selected_preset_id):
         # (selected_preset_id)
-        # read from file
+        # read from file and then store the settings
 
         # TO DO read preset settings that belong to a preset_id
         print("*")
@@ -257,6 +262,8 @@ class Settings:
                 #is_all_settings_stored = False
                 #iterator = 0
                 print("!! PRESET " + selected_preset_id)
+
+                dict_preset_settings = {}
                 for i in range(presets_count):
                     for (key, value) in file_content['presets'][i].items():
                         if(key == "preset_id" and value == selected_preset_id):
@@ -269,21 +276,55 @@ class Settings:
                         if(is_searching_settings):
                             if(key == "model"):
                                 print(str(key) + " " + str(value))
+                                dict_preset_settings[key] = value
                             if(key == "contents"):
                                 print(str(key) + " " + str(value))
+                                dict_preset_settings[key] = value
                             if(key == "thinking_level"):   
-                                print(str(key) + " " + str(value)) 
+                                print(str(key) + " " + str(value))
+                                dict_preset_settings[key] = value 
+
+                if(not(len(dict_preset_settings) == 0)):
+                    #print(dict_preset_settings)
+                    Settings.store_preset_settings(dict_preset_settings)
 
             except Exception as e:
                 print(e)      
 
-    def store_preset_settings():
+    def store_preset_settings(dict_preset_settings):        # (set_preset_settings)
         # TO DO store preset setting
+        
+        # (key value) pairs store (in Settings class ...)
+        # ... overwrite stored values ... if needed
+        # add certain key value pair or delete (set to "" string ...)
+
+        is_model_available = False
+        is_contents_available = False
+        is_thinking_level_available = False
+        for (key, value) in dict_preset_settings.items():
+            if(key == "model"):
+                print("*!")
+                print(str(key) + " " + str(value))
+                Settings.model = value
+                is_model_available = True
+            if(key == "contents"):
+                print("*!")
+                print(str(key) + " " + str(value))
+                Settings.contents = value
+                is_contents_available = True
+            if(key == "thinking_level"):
+                print("*!")   
+                print(str(key) + " " + str(value))
+                Settings.thinking_level = value 
+                is_thinking_level_available = True
 
         # TO DO decide if a certain setting is available (TRUE/FALSE)
-
-        #print("!!")
-        pass
+        if(not(is_model_available)):
+            Settings.model = ""
+        if(not(is_contents_available)):
+            Settings.contents = ""
+        if(not(is_thinking_level_available)):
+            Settings.thinking_level = ""
 
 
 class AskGenAI:
