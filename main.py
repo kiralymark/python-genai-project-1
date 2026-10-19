@@ -3,6 +3,7 @@ import json
 
 class Program:
     selected_preset_id = 0
+    is_api_testing = False
 
     def __init__(self):
         Program.read_from_file_selected_preset_id()
@@ -24,23 +25,62 @@ class Program:
 
         while is_program_running:
             Program.read_from_file_selected_preset_id()
+            Settings.read_preset_settings(Program.selected_preset_id)
 
             user_input = input(str_choose_menu_message)
 
             # menu Ask AI
             if(user_input == "1"):
-                AskGenAI.ask_ai()
+                #AskGenAI.ask_ai()
+
+                # TO DO: if 'api testing' (True), only use preset_id 0 (the default)
+                # preset_id 1 or else:
+                #   function calls with different number of parameters,
+                #   if not valid, throw exception with message
+
+                # confirmation message of currently used settings,
+                # if yes continue write 'y'
+
+                # check if a certain preset setting is available
+                is_model_available = False
+                is_contents_available = False
+                is_thinking_level_available = False
+
+                if(not(len(Settings.model) == 0)):
+                    is_model_available = True
+                if(not(len(Settings.contents) == 0)):
+                    is_contents_available = True
+                if(not(len(Settings.thinking_level) == 0)):
+                    is_thinking_level_available = True
+
+                #is_model_available = False  # test value
+
+                if(Program.is_api_testing):
+                    print("*!")
+                    # to do: implement 'ask_ai' logic here
+                    AskGenAI.ask_ai()
+                else:
+                    if(is_model_available and is_contents_available and not(is_thinking_level_available)):       # API TEST MODE
+                        print("Error: Please use a different preset or enable 'Test API connection'!")
+                    elif(is_model_available and not(is_contents_available) and not(is_thinking_level_available)):
+                        print("**1")
+                        AskGenAI.ask_ai_2()
+                    elif(is_model_available and not(is_contents_available) and is_thinking_level_available):
+                        print("**2")
+                        AskGenAI.ask_ai_3()
+                    else:
+                        print("Error: Incorrect number and or type of parameters!")
+                        
+                    #print("!!")
+
                 Program.read_from_file_selected_preset_id()
-                pass
 
             # menu Settings
             elif(user_input == "2"):
                 is_settings_menu_active = True
 
                 while is_settings_menu_active:
-                    Settings.read_preset_settings(Program.selected_preset_id)
-
-                    is_api_testing = False
+                    #is_api_testing = False
 
                     print("\nSettings Menu")
                     print("Currently selected preset ID: " + str(Program.selected_preset_id) + "\n")
@@ -53,7 +93,7 @@ class Program:
                         print("thinking_level = " + "'" + Settings.thinking_level + "'")
 
                     print("\n1 - Select a preset_id")
-                    print("2 - Test API connection " + "(" + str(is_api_testing) + ")")
+                    print("2 - Test API connection " + "(" + str(Program.is_api_testing) + ")")
                     print("3 - Exit")
 
                     user_input = input(str_choose_menu_message)
@@ -72,7 +112,8 @@ class Program:
                                 Settings.change_settings(user_input)
 
                     elif(user_input == "2"):
-                        print("test...")
+                        #print("test...")
+                        Program.is_api_testing = not(Program.is_api_testing)
                         
                     elif(user_input == "3"):
                         print(str_main_menu)
@@ -96,7 +137,7 @@ class Program:
                 file_content = json.load(file)      # to load a JSON object ; jsonData
 
             except Exception as e:
-                print(e)
+                print("ERROR: " + str(e))
 
         for (key, value) in file_content['settings'][0].items():
             if(key == "selected_preset_id"):
@@ -121,7 +162,7 @@ class Settings:
             return True
         
         except Exception as e:
-            print(e)
+            print("ERROR: " + str(e))
             return False
 
     def change_settings(user_input):
@@ -140,13 +181,17 @@ class Settings:
             try:
                 file_content = json.load(file)      # to load a JSON object ; jsonData
                 presets_count = len(file_content['presets'])
+                print("***" + str(presets_count))
+                #print(file_content['presets'])
                 for i in range(presets_count):
                     for (key, value) in file_content['presets'][i].items():
                         if(key == "preset_id"):
                             list_available_id.append(str(value))
 
+                print(list_available_id)
+
             except Exception as e:
-                print(e)
+                print("ERROR: " + str(e))
 
         is_searching_value = True
         for id in list_available_id:
@@ -168,7 +213,7 @@ class Settings:
                 file_content = json.load(file)      # to load a JSON object ; jsonData
 
             except Exception as e:
-                print(e)
+                print("ERROR: " + str(e))
 
         with open("settings.json", "w") as file:
             try:
@@ -176,7 +221,7 @@ class Settings:
                 file.write(json.dumps(file_content, indent=4))
 
             except Exception as e:
-                print(e)
+                print("ERROR: " + str(e))
 
     def print_all_preset_id():
         with open("settings.json", "r") as file:    # Open the file in read mode
@@ -190,7 +235,7 @@ class Settings:
                             print(str(key) + " " + str(value))
 
             except Exception as e:
-                print(e)
+                print("ERROR: " + str(e))
 
     def read_preset_settings(selected_preset_id):
         # (selected_preset_id)
@@ -223,7 +268,7 @@ class Settings:
                     Settings.store_preset_settings(dict_preset_settings)
 
             except Exception as e:
-                print(e)      
+                print("ERROR: " + str(e))      
 
     def store_preset_settings(dict_preset_settings):        # (set_preset_settings)
         # TO DO store preset settings
@@ -263,13 +308,60 @@ class AskGenAI:
     def ask_ai():
 
         print("!")
-        pass
 
         file = open("secrets/pass.txt", "r")    # Open the file in read mode
 
         file_content = file.read()      # read the file_content
         #client = genai.Client(api_key=file_content)
         file.close()
+
+        # to do: load the preset settings for ' preset_id 0 '
+        # read from file (settings json)
+
+        dict_preset_settings = {}
+        with open("settings.json", "r") as file:    # Open the file in read mode
+            try:
+                file_content = json.load(file)      # to load a JSON object ; jsonData
+                presets_count = len(file_content['presets'])
+                print("***" + str(presets_count))
+                #print(file_content['presets'])
+                is_searching_value = True
+                for i in range(presets_count):
+                    if(is_searching_value):
+                        for (key, value) in file_content['presets'][i].items():
+                            if(key == "preset_id" and value == "0"):
+                                is_searching_value = False
+                            if(key == "model"):
+                                dict_preset_settings[key] = value
+                            if(key == "contents"):
+                                dict_preset_settings[key] = value
+
+                if(len(dict_preset_settings) == 0):
+                    print("Error: " + "Settings for Preset ID 0 cannot be found!")
+
+                #print("******")
+                #print(dict_preset_settings.items())
+                #print(dict_preset_settings)
+                #print(dict_preset_settings["model"])
+                #print(dict_preset_settings["contents"])
+
+            except Exception as e:
+                print("ERROR: " + str(e))
+
+        model = str(dict_preset_settings["model"])
+        content = str(dict_preset_settings["contents"])
+
+        #response = client.models.generate_content(
+        #     model=model,
+        #     contents=content
+        #
+        #)
+        #print(response.text)
+
+        #AskGenAI.write_to_file_response(response.text)
+        #AskGenAI.write_to_file_response(file_prompt_content)
+
+
 
         #response = client.models.generate_content(
         #     model="gemini-3.5-flash-lite",
@@ -278,9 +370,127 @@ class AskGenAI:
         #)
         #print(response.text)
 
+
+    # ask_ai_4()    # only model and contents is available
+    #   pass
+
+
     # ask_ai_2()    # only model is available
+    def ask_ai_2():
+
+        #Settings.model     
+        
+        file = open("secrets/pass.txt", "r")    # Open the file in read mode
+
+        file_content = file.read()      # read the file_content
+        #client = genai.Client(api_key=file_content)
+        file.close()
+
+        file_prompt_content = str(AskGenAI.read_from_file_prompt())
+        
+        #response = client.models.generate_content(
+        #     model=Settings.model,
+        #     contents=file_prompt_content
+        #
+        #)
+        #print(response.text)
+
+
+        #AskGenAI.write_to_file_response(response.text)
+        print(file_prompt_content)
+        AskGenAI.write_to_file_response(file_prompt_content)
+
+
+
+        #response = client.models.generate_content(
+        #     model=Settings.model,
+        #     contents="Why is the sky blue?"
+        #
+        #)
+        #print(response.text)
+
+        print("!!")
 
     # ask_ai_3()    # model and thinking_level is available
+    def ask_ai_3():
+
+        #Settings.model
+        #Settings.thinking_level
+        
+        file = open("secrets/pass.txt", "r")    # Open the file in read mode
+
+        file_content = file.read()      # read the file_content
+        #client = genai.Client(api_key=file_content)
+        file.close()
+
+        file_prompt_content = str(AskGenAI.read_from_file_prompt())
+        
+        # response = client.models.generate_content(
+        #     model=Settings.model,
+        #     contents=file_prompt_content,
+        #     config=types.GenerateContentConfig(
+        #         thinking_config=types.ThinkingConfig(
+        #             thinking_level=Settings.thinking_level
+        #         )
+        #     )
+        # )
+        #print(response.text)
+
+
+        #AskGenAI.write_to_file_response(response.text)
+        print(file_prompt_content)
+        AskGenAI.write_to_file_response(file_prompt_content)
+
+
+        #model = file.read()
+        #prompt = file.read()
+        #include_thoughts = file.read() # values: True / False
+        #thinking_level = file.read()   # values: "low" , "medium" , "high"
+
+        # response = client.models.generate_content(
+        #     model=model,
+        #     contents=prompt,
+        #     config=types.GenerateContentConfig(
+        #         max_output_tokens=5000,
+        #         thinking_config=types.ThinkingConfig(
+        #             include_thoughts=False,
+        #             thinking_level="high"
+        #         )
+        #     )
+        # )
+        #print(response.text)
+
+        print("!!!")
+
+    def read_from_file_prompt():
+
+        #file = open("secrets/pass.txt", "r")    # Open the file in read mode
+
+        #file_content = file.read()      # read the file_content
+        #client = genai.Client(api_key=file_content)
+        #file.close()
+
+        with open("prompt.md", "r") as file:
+            try:
+                file_content = file.read()
+
+            except Exception as e:
+                print("ERROR: " + str(e))
+
+        return file_content
+
+    def write_to_file_response(response_text):
+        #response_text = "Testing testing testing"
+
+        #file_content = response_text
+
+        with open("response.md", "w") as file:
+            try:
+                #file.write(file_content)            #response_text      #file_content 
+                file.write(response_text)
+
+            except Exception as e:
+                print("ERROR: " + str(e))
 
 
 # Run the program
