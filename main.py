@@ -1,4 +1,5 @@
 from google import genai
+from google.genai import types
 import json
 
 class Program:
@@ -31,16 +32,6 @@ class Program:
 
             # menu Ask AI
             if(user_input == "1"):
-                #AskGenAI.ask_ai()
-
-                # TO DO: if 'api testing' (True), only use preset_id 0 (the default)
-                # preset_id 1 or else:
-                #   function calls with different number of parameters,
-                #   if not valid, throw exception with message
-
-                # confirmation message of currently used settings,
-                # if yes continue write 'y'
-
                 # check if a certain preset setting is available
                 is_model_available = False
                 is_contents_available = False
@@ -61,17 +52,15 @@ class Program:
                     elif(is_model_available and not(is_contents_available) and not(is_thinking_level_available)):
                         is_permitted = AskGenAI.ask_ai_confirmation_messages()
                         if(is_permitted):
-                            print("....!!!!")
+                            AskGenAI.ask_ai_2()
                         else:
                             print("Aborted...")
-                        #AskGenAI.ask_ai_2()
                     elif(is_model_available and not(is_contents_available) and is_thinking_level_available):
                         is_permitted = AskGenAI.ask_ai_confirmation_messages()
                         if(is_permitted):
-                            print("......!!!!!!")
+                            AskGenAI.ask_ai_3()
                         else:
                             print("Aborted...")
-                        #AskGenAI.ask_ai_3()
                     else:
                         print("Error: Incorrect number and or type of parameters!")
 
@@ -331,16 +320,16 @@ class AskGenAI:
 
     # ask_ai_1()    # Zero parameters, default test method (in production version do not modify)
     def ask_ai():
-
-        print("!")
+        # - ask ai confirmation messages
+        # - ask ai
 
         file = open("secrets/pass.txt", "r")    # Open the file in read mode
 
         file_content = file.read()      # read the file_content
-        #client = genai.Client(api_key=file_content)
+        client = genai.Client(api_key=file_content)
         file.close()
 
-        # to do: load the preset settings for ' preset_id 0 '
+        # Load the preset settings for ' preset_id 0 '
         # read from file (settings json)
 
         dict_preset_settings = {}
@@ -348,8 +337,7 @@ class AskGenAI:
             try:
                 file_content = json.load(file)      # to load a JSON object ; jsonData
                 presets_count = len(file_content['presets'])
-                print("***" + str(presets_count))
-                #print(file_content['presets'])
+
                 is_searching_value = True
                 for i in range(presets_count):
                     if(is_searching_value):
@@ -364,12 +352,6 @@ class AskGenAI:
                 if(len(dict_preset_settings) == 0):
                     print("Error: " + "Settings for Preset ID 0 cannot be found!")
 
-                #print("******")
-                #print(dict_preset_settings.items())
-                #print(dict_preset_settings)
-                #print(dict_preset_settings["model"])
-                #print(dict_preset_settings["contents"])
-
             except Exception as e:
                 print("ERROR: " + str(e))
 
@@ -380,84 +362,105 @@ class AskGenAI:
         is_permitted = AskGenAI.ask_ai_confirmation_messages(model, content)
 
         if(is_permitted):
-            print(".!")
+            print("\nresponse = ")
+            print("\"\"\"")
+            response = client.models.generate_content(
+                 model=model,
+                 contents=content
+            )
+            print(response.text)
+            print("\"\"\"")
+
+            AskGenAI.write_to_file_response(response.text)
         else:
             print("Aborted...")
-
-        #response = client.models.generate_content(
-        #     model=model,
-        #     contents=content
-        #
-        #)
-        #print(response.text)
-
-        #AskGenAI.write_to_file_response(response.text)
-        #AskGenAI.write_to_file_response(file_prompt_content)
-
-
-
-        #response = client.models.generate_content(
-        #     model="gemini-3.5-flash-lite",
-        #     contents="Why is the sky blue?"
-        #
-        #)
-        #print(response.text)
-
-
-    # ask_ai_4()    # only model and contents is available
-    #   pass
-
 
     # ask_ai_2()    # only model is available
     def ask_ai_2():
 
-        #Settings.model     
-        
         file = open("secrets/pass.txt", "r")    # Open the file in read mode
 
         file_content = file.read()      # read the file_content
-        #client = genai.Client(api_key=file_content)
+        client = genai.Client(api_key=file_content)
         file.close()
 
         file_prompt_content = str(AskGenAI.read_from_file_prompt())
         
-        #response = client.models.generate_content(
-        #     model=Settings.model,
-        #     contents=file_prompt_content
-        #
-        #)
-        #print(response.text)
+        response = client.models.generate_content(
+             model=Settings.model,
+             contents=file_prompt_content
+        )
+        print("\nresponse = ")
+        print("\"\"\"")
+        print(response.text)
+        print("\"\"\"")
 
-
-        #AskGenAI.write_to_file_response(response.text)
-        print(file_prompt_content)
-        AskGenAI.write_to_file_response(file_prompt_content)
-
-
-
-        #response = client.models.generate_content(
-        #     model=Settings.model,
-        #     contents="Why is the sky blue?"
-        #
-        #)
-        #print(response.text)
-
-        print("!!")
+        AskGenAI.write_to_file_response(response.text)
 
     # ask_ai_3()    # model and thinking_level is available
     def ask_ai_3():
 
-        #Settings.model
-        #Settings.thinking_level
-        
         file = open("secrets/pass.txt", "r")    # Open the file in read mode
 
         file_content = file.read()      # read the file_content
-        #client = genai.Client(api_key=file_content)
+        client = genai.Client(api_key=file_content)
         file.close()
 
         file_prompt_content = str(AskGenAI.read_from_file_prompt())
+
+        # is_thinking_level_valid = False
+        # if(str(Settings.thinking_level).upper() == "MINIMAL"):
+        #     thinking_level_content = genai.types.ThinkingLevel.MINIMAL
+        #     is_thinking_level_valid = True 
+        # elif(str(Settings.thinking_level).upper() == "LOW"):
+        #     thinking_level_content = genai.types.ThinkingLevel.LOW
+        #     is_thinking_level_valid = True 
+        # elif(str(Settings.thinking_level).upper() == "MEDIUM"):
+        #     thinking_level_content = genai.types.ThinkingLevel.MEDIUM
+        #     is_thinking_level_valid = True 
+        # elif(str(Settings.thinking_level).upper() == "HIGH"):
+        #     thinking_level_content = genai.types.ThinkingLevel.HIGH
+        #     is_thinking_level_valid = True 
+        # else:
+        #     print("Error: " + "Setting for 'ThinkingLevel' cannot be found!")
+        #     return None
+
+
+        response = client.models.generate_content(
+            model=Settings.model,
+            contents=file_prompt_content,
+            config=types.GenerateContentConfig(
+                thinking_config=types.ThinkingConfig(
+                    thinking_level=Settings.thinking_level
+                )
+            )
+        )
         
+        # error 03
+        #
+        # if(is_thinking_level_valid):
+        #     response = client.models.generate_content(
+        #         model=Settings.model,
+        #         contents=file_prompt_content,
+        #         config=genai.types.GenerateContentConfig(
+        #             thinking_config=genai.types.ThinkingConfig(
+        #                 thinking_level=genai.ThinkingLevel.MEDIUM
+        #             )
+        #         )
+        #     )
+
+        # error 02
+        #
+        # response = client.models.generate_content(
+        #     model=Settings.model,
+        #     contents=file_prompt_content,
+        #     generation_config={
+        #         "thinking_level": Settings.thinking_level
+        #     }
+        # )
+
+        # error 01
+        #
         # response = client.models.generate_content(
         #     model=Settings.model,
         #     contents=file_prompt_content,
@@ -467,33 +470,15 @@ class AskGenAI:
         #         )
         #     )
         # )
-        #print(response.text)
 
 
-        #AskGenAI.write_to_file_response(response.text)
-        print(file_prompt_content)
-        AskGenAI.write_to_file_response(file_prompt_content)
 
+        print("\nresponse = ")
+        print("\"\"\"")
+        print(response.text)
+        print("\"\"\"")
 
-        #model = file.read()
-        #prompt = file.read()
-        #include_thoughts = file.read() # values: True / False
-        #thinking_level = file.read()   # values: "low" , "medium" , "high"
-
-        # response = client.models.generate_content(
-        #     model=model,
-        #     contents=prompt,
-        #     config=types.GenerateContentConfig(
-        #         max_output_tokens=5000,
-        #         thinking_config=types.ThinkingConfig(
-        #             include_thoughts=False,
-        #             thinking_level="high"
-        #         )
-        #     )
-        # )
-        #print(response.text)
-
-        print("!!!")
+        AskGenAI.write_to_file_response(response.text)
 
     def read_from_file_prompt():
 
