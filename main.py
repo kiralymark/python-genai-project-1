@@ -58,21 +58,32 @@ class Program:
                 if(Program.is_api_testing):
                     print("*!")
                     # to do: implement 'ask_ai' logic here
-                    AskGenAI.ask_ai()
+                    AskGenAI.ask_ai()   # plus ask ai confirmation messages
                 else:
                     if(is_model_available and is_contents_available and not(is_thinking_level_available)):       # API TEST MODE
                         print("Error: Please use a different preset or enable 'Test API connection'!")
                     elif(is_model_available and not(is_contents_available) and not(is_thinking_level_available)):
                         print("**1")
-                        AskGenAI.ask_ai_2()
+                        is_permitted = AskGenAI.ask_ai_confirmation_messages()
+                        if(is_permitted):
+                            print("....!!!!")
+                        else:
+                            print("Aborted...")
+                        #AskGenAI.ask_ai_2()
                     elif(is_model_available and not(is_contents_available) and is_thinking_level_available):
                         print("**2")
-                        AskGenAI.ask_ai_3()
+                        is_permitted = AskGenAI.ask_ai_confirmation_messages()
+                        if(is_permitted):
+                            print("......!!!!!!")
+                        else:
+                            print("Aborted...")
+                        #AskGenAI.ask_ai_3()
                     else:
                         print("Error: Incorrect number and or type of parameters!")
                         
                     #print("!!")
 
+                print(str_main_menu)
                 Program.read_from_file_selected_preset_id()
 
             # menu Settings
@@ -304,6 +315,33 @@ class AskGenAI:
     def __init__(self):
         pass
 
+    def ask_ai_confirmation_messages(model = "", content = ""):
+        print("\nDo you want to send the prompt with these settings?")
+
+        #model_content = ""
+        #contents_content = ""
+
+        if(Program.is_api_testing):         # API TEST MODE
+            #model_content = model
+            #contents_content = content
+
+            print("API TESTING")
+            print("model = " + "'" + str(model) + "'")
+            print("contents = " + "'" + str(content) + "'")
+        else:                                                   # ask_ai mode
+            print("preset_id = " + "'" + str(Program.selected_preset_id) + "'")
+            if(not(len(Settings.model) == 0)):
+                print("model = " + "'" + str(Settings.model) + "'")
+            if(not(len(Settings.thinking_level) == 0)):
+                print("thinking_level = " + "'" + str(Settings.thinking_level) + "'")
+
+        user_input = input("(y/n): ")
+
+        if(user_input.lower() == "y" or user_input.lower() == "yes"):
+            return True
+        else:
+            return False
+
     # ask_ai_1()    # zero parameters, default test method, (in production version do not modify)
     def ask_ai():
 
@@ -350,6 +388,14 @@ class AskGenAI:
 
         model = str(dict_preset_settings["model"])
         content = str(dict_preset_settings["contents"])
+
+        # ask ai confirmation messages
+        is_permitted = AskGenAI.ask_ai_confirmation_messages(model, content)
+
+        if(is_permitted):
+            print(".!")
+        else:
+            print("Aborted...")
 
         #response = client.models.generate_content(
         #     model=model,
