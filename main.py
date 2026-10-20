@@ -316,7 +316,11 @@ class AskGenAI:
         pass
 
     def ask_ai_confirmation_messages(model = "", content = ""):
-        print("\nDo you want to send the prompt with these settings?")
+        # - let user decide if settings acceptable
+        # - print settings
+        # - print out current prompt
+
+        print("\nCurrent settings: ")
 
         #model_content = ""
         #contents_content = ""
@@ -335,6 +339,10 @@ class AskGenAI:
             if(not(len(Settings.thinking_level) == 0)):
                 print("thinking_level = " + "'" + str(Settings.thinking_level) + "'")
 
+            print("contents = ")
+            print("\"\"\"\n" + str(AskGenAI.read_from_file_prompt()) + "\n\"\"\"")
+
+        print("\nDo you want to send the prompt with these settings?")
         user_input = input("(y/n): ")
 
         if(user_input.lower() == "y" or user_input.lower() == "yes"):
