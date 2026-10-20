@@ -408,24 +408,6 @@ class AskGenAI:
 
         file_prompt_content = str(AskGenAI.read_from_file_prompt())
 
-        # is_thinking_level_valid = False
-        # if(str(Settings.thinking_level).upper() == "MINIMAL"):
-        #     thinking_level_content = genai.types.ThinkingLevel.MINIMAL
-        #     is_thinking_level_valid = True 
-        # elif(str(Settings.thinking_level).upper() == "LOW"):
-        #     thinking_level_content = genai.types.ThinkingLevel.LOW
-        #     is_thinking_level_valid = True 
-        # elif(str(Settings.thinking_level).upper() == "MEDIUM"):
-        #     thinking_level_content = genai.types.ThinkingLevel.MEDIUM
-        #     is_thinking_level_valid = True 
-        # elif(str(Settings.thinking_level).upper() == "HIGH"):
-        #     thinking_level_content = genai.types.ThinkingLevel.HIGH
-        #     is_thinking_level_valid = True 
-        # else:
-        #     print("Error: " + "Setting for 'ThinkingLevel' cannot be found!")
-        #     return None
-
-
         response = client.models.generate_content(
             model=Settings.model,
             contents=file_prompt_content,
@@ -436,43 +418,6 @@ class AskGenAI:
             )
         )
         
-        # error 03
-        #
-        # if(is_thinking_level_valid):
-        #     response = client.models.generate_content(
-        #         model=Settings.model,
-        #         contents=file_prompt_content,
-        #         config=genai.types.GenerateContentConfig(
-        #             thinking_config=genai.types.ThinkingConfig(
-        #                 thinking_level=genai.ThinkingLevel.MEDIUM
-        #             )
-        #         )
-        #     )
-
-        # error 02
-        #
-        # response = client.models.generate_content(
-        #     model=Settings.model,
-        #     contents=file_prompt_content,
-        #     generation_config={
-        #         "thinking_level": Settings.thinking_level
-        #     }
-        # )
-
-        # error 01
-        #
-        # response = client.models.generate_content(
-        #     model=Settings.model,
-        #     contents=file_prompt_content,
-        #     config=types.GenerateContentConfig(
-        #         thinking_config=types.ThinkingConfig(
-        #             thinking_level=Settings.thinking_level
-        #         )
-        #     )
-        # )
-
-
-
         print("\nresponse = ")
         print("\"\"\"")
         print(response.text)
